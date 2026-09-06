@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sri Rajarajeshwara Home Care Solutions</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+  :root{
+    --navy:#1B3A5C;
+    --navy-dark:#12283f;
+    --gold:#D9A441;
+    --gold-dark:#b9862d;
+    --bg:#FBF8F2;
+    --card:#ffffff;
+    --line:#e7e1d4;
+    --text:#2b2b2b;
+    --muted:#6b6b6b;
+    --danger:#b3261e;
+    --ok:#1a7f4e;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+  h1,h2,h3,.display{font-family:'Fraunces',serif;}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;font-size:1rem;padding:10px 12px;border:1px solid var(--line);border-radius:10px;width:100%;background:#fff;}
+  label{font-size:.85rem;font-weight:600;color:var(--muted);display:block;margin:10px 0 4px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;border-radius:12px;border:none;font-weight:600;font-size:.95rem;}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:disabled{opacity:.5;}
+  .btn-gold{background:var(--gold);color:#2b2000;}
+  .btn-outline{background:#fff;border:1.5px solid var(--navy);color:var(--navy);}
+  .btn-danger{background:#fdeceb;color:var(--danger);}
+  .btn-sm{padding:8px 12px;font-size:.85rem;border-radius:9px;}
+  .btn-block{width:100%;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;}
+  .container{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:70px;position:relative;}
+  .container.wide{max-width:900px;}
+  .topbar{background:var(--navy);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;}
+  .topbar h2{margin:0;font-size:1.05rem;color:#fff;}
+  .back{background:none;border:none;color:#fff;font-size:1.3rem;padding:4px 8px;}
+  .content{padding:16px;}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.02em;}
+  .pill-pending{background:#fff3d6;color:#8a6300;}
+  .pill-confirmed{background:#dff3e6;color:var(--ok);}
+  .pill-completed{background:#e4e9f0;color:var(--navy);}
+  .pill-cancelled{background:#fbe4e2;color:var(--danger);}
+  .pill-contacted{background:#e6effa;color:#2a5d8f;}
+  .hero{background:linear-gradient(160deg,var(--navy),var(--navy-dark));color:#fff;padding:34px 20px 28px;text-align:center;border-radius:0 0 28px 28px;}
+  .hero .logo-name{font-size:2rem;color:var(--gold);line-height:1.05;font-weight:700;}
+  .hero .logo-name2{font-size:1.15rem;color:#fff;font-weight:600;margin-top:2px;}
+  .hero .tagline{margin-top:10px;font-size:.95rem;color:#dfe7f0;}
+  .hero .loc{margin-top:4px;font-size:.8rem;color:#b8c6d8;}
+  .navgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px 16px;}
+  .navcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 10px;text-align:center;font-weight:600;font-size:.9rem;color:var(--navy);}
+  .footer-link{display:block;text-align:center;padding:16px;color:var(--muted);font-size:.85rem;}
+  .sync-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;border-radius:12px;padding:8px 12px;font-size:.72rem;margin-bottom:14px;border:1px solid;}
+  .sync-ok{background:#eaf7ef;border-color:#bfe6cd;color:var(--ok);}
+  .sync-err{background:#fdeceb;border-color:#f3c6c2;color:var(--danger);}
+  .sync-strip button{border:1px solid currentColor;background:none;color:inherit;border-radius:8px;padding:4px 8px;font-size:.72rem;font-weight:600;}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center;}
+  .stat .num{font-size:1.6rem;font-weight:700;color:var(--navy);}
+  .stat .lab{font-size:.75rem;color:var(--muted);margin-top:2px;}
+  .booking-row{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;background:#fff;}
+  .row-between{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .muted{color:var(--muted);font-size:.85rem;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .tabbar{display:flex;overflow-x:auto;gap:6px;padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:56px;z-index:9;}
+  .tab{white-space:nowrap;padding:8px 14px;border-radius:999px;font-size:.82rem;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--navy);}
+  .tab.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .adminnav{display:flex;overflow-x:auto;gap:6px;padding:10px 12px;background:var(--navy-dark);}
+  .adminnav button{white-space:nowrap;padding:8px 14px;border-radius:10px;font-size:.82rem;font-weight:600;border:none;background:transparent;color:#c9d6e5;}
+  .adminnav button.active{background:var(--gold);color:#2b2000;}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:.85rem;z-index:50;}
+  .imgph{aspect-ratio:4/3;background:#e9e4d6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#8a8168;text-align:center;padding:6px;}
+  .starrow{display:flex;gap:4px;font-size:1.3rem;color:var(--gold);}
+  table.plain{width:100%;border-collapse:collapse;font-size:.85rem;}
+  table.plain td{padding:4px 0;}
+  .loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;color:var(--muted);gap:10px;}
+</style>
+</head>
+<body>
+<div id="root"><div class="loading-screen">Loading SRR HCS…</div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
+  onSnapshot, query, where, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+// ====== YOUR FIREBASE CONFIG ======
+const firebaseConfig = {
+  apiKey: "AIzaSyCsepyoK_R4hL-8r2v7fly4t1ULly4Tfic",
+  authDomain: "srr-hcs.firebaseapp.com",
+  projectId: "srr-hcs",
+  storageBucket: "srr-hcs.firebasestorage.app",
+  messagingSenderId: "1098688271910",
+  appId: "1:1098688271910:web:17f3e85c0e325efbb1f8e7",
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const auth = getAuth(fbApp);
+
+const DEFAULT_SETTINGS = {
+  businessName: "Sri Rajarajeshwara",
+  businessName2: "Home Care Solutions",
+  tagline: "Clean Home, Better Life",
+  address: "Ashok Nagar Colony, Kamareddy, PIN 503111",
+  phone: "8801601118",
+  whatsapp: "918801601118",
+  instagram: "https://www.instagram.com/srirajarajeshwara_33",
+  youtube: "https://www.youtube.com/@pnprasad3009",
+};
+
+const SERVICES = ["Deep Cleaning","Sofa & Carpet Cleaning","Kitchen Cleaning","Bathroom Cleaning","Office Cleaning","Move-in/Move-out Cleaning","Other"];
+const TIMES = ["9:00 AM","10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM"];
+
+// ---------- tiny state ----------
+const state = {
+  side: "customer", // customer | admin
+  view: "home",
+  adminUser: null,
+  settings: DEFAULT_SETTINGS,
+  bookings: [],
+  projects: [],
+  reviews: [],
+  synced: false,
+  syncError: null,
+  toastMsg: null,
+  bookingLookupPhone: "",
+  editingBookingId: null,
+  editingProjectId: null,
+};
+
+// ---------- Firestore live sync ----------
+onSnapshot(doc(db,"settings","main"), (snap)=>{
+  state.settings = snap.exists() ? {...DEFAULT_SETTINGS, ...snap.data()} : DEFAULT_SETTINGS;
+  state.synced = true; state.syncError = null;
+  draw();
+}, (err)=>{ state.syncError = err.message; draw(); });
+
+onSnapshot(collection(db,"bookings"), (snap)=>{
+  state.bookings = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  state.synced = true; state.syncError = null;
+  draw();
+}, (err)=>{ state.syncError = err.message; draw(); });
+
+onSnapshot(collection(db,"projects"), (snap)=>{
+  state.projects = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  draw();
+}, (err)=>{ state.syncError = err.message; draw(); });
+
+onSnapshot(collection(db,"reviews"), (snap)=>{
+  state.reviews = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  draw();
+}, (err)=>{ state.syncError = err.message; draw(); });
+
+onAuthStateChanged(auth, (user)=>{
+  state.adminUser = user;
+  if(user && state.side==="admin" && state.view==="adminLogin") state.view = "adminHome";
+  if(!user && state.side==="admin") state.view = "adminLogin";
+  draw();
+});
+
+// ---------- helpers ----------
+function esc(s){ return (s??"").toString().replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function fmtDate(d){ if(!d) return ""; const dt=new Date(d+"T00:00:00"); return dt.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}); }
+function toast(msg){ state.toastMsg = msg; draw(); setTimeout(()=>{ state.toastMsg=null; draw(); }, 2600); }
+function pillClass(status){
+  return {Pending:"pill-pending",Confirmed:"pill-confirmed",Completed:"pill-completed",Cancelled:"pill-cancelled",Contacted:"pill-contacted"}[status] || "pill-pending";
+}
+function go(view){ state.view = view; draw(); window.scrollTo(0,0); }
+function switchSide(side){ state.side = side; state.view = side==="admin" ? (state.adminUser?"adminHome":"adminLogin") : "home"; draw(); }
+
+async function checkSlotConflict(date, time, excludeId){
+  return state.bookings.some(b => b.date===date && b.time===time && b.status==="Confirmed" && b.id!==excludeId);
+}
+
+// ---------- CUSTOMER VIEWS ----------
+function viewHome(){
+  const s = state.settings;
+  const loc = (s.address||"").split(",").slice(0,2).join(",").trim();
+  return `
+  <div class="hero">
+    <div class="logo-name display">${esc(s.businessName)}</div>
+    <div class="logo-name2 display">${esc(s.businessName2)}</div>
+    <div class="tagline">${esc(s.tagline)}</div>
+    <div class="loc">${esc(loc)}</div>
+  </div>
+  <div class="navgrid">
+    <button class="navcard" onclick="Nav.go('booking')">📅<br/>Book a Service</button>
+    <button class="navcard" onclick="Nav.go('gallery')">🖼️<br/>Our Work</button>
+    <button class="navcard" onclick="Nav.go('reviews')">⭐<br/>Reviews</button>
+    <button class="navcard" onclick="Nav.go('contact')">📞<br/>Contact</button>
+  </div>
+  <button class="navcard" style="width:calc(100% - 32px);margin:0 16px 16px;" onclick="Nav.go('status')">🔍 Check my booking status</button>
+  <button class="footer-link" onclick="Nav.switchSide('admin')" style="background:none;border:none;width:100%;">SRR HCS Staff Login</button>
+  `;
+}
+
+function topbar(title, backView){
+  return `<div class="topbar">
+    <button class="back" onclick="Nav.go('${backView}')">←</button>
+    <h2>${esc(title)}</h2>
+  </div>`;
+}
+
+function viewBooking(){
+  return topbar("Book a Service","home") + `
+  <div class="content">
+    <label>Service</label>
+    <select id="f_service">${SERVICES.map(s=>`<option>${esc(s)}</option>`).join("")}</select>
+    <label>Preferred Date</label>
+    <input type="date" id="f_date" min="${new Date().toISOString().slice(0,10)}" />
+    <label>Preferred Time</label>
+    <select id="f_time">${TIMES.map(t=>`<option>${esc(t)}</option>`).join("")}</select>
+    <label>Your Name</label>
+    <input id="f_name" placeholder="Full name" />
+    <label>Phone Number</label>
+    <input id="f_phone" placeholder="10-digit mobile number" />
+    <label>Address</label>
+    <input id="f_address" placeholder="House / area, Kamareddy" />
+    <label>Message (optional)</label>
+    <textarea id="f_message" rows="3" placeholder="Any details about the job"></textarea>
+    <div id="f_err" class="muted" style="color:var(--danger);margin-top:8px;"></div>
+    <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="Actions.submitBooking()">Submit Booking Request</button>
+  </div>`;
+}
+
+function viewStatus(){
+  const phone = state.bookingLookupPhone;
+  const matches = phone ? state.bookings.filter(b=>b.phone===phone) : [];
+  return topbar("Booking Status","home") + `
+  <div class="content">
+    <label>Enter your phone number</label>
+    <div style="display:flex;gap:8px;">
+      <input id="lookup_phone" placeholder="10-digit mobile number" value="${esc(phone)}" />
+      <button class="btn btn-primary" onclick="Actions.lookupBooking()">Search</button>
+    </div>
+    ${phone ? (matches.length ? matches.map(b=>`
+      <div class="booking-row">
+        <div class="row-between"><b>${esc(b.service)}</b><span class="pill ${pillClass(b.status)}">${esc(b.status)}</span></div>
+        <div class="muted">${fmtDate(b.date)} · ${esc(b.time)}</div>
+      </div>`).join("") : `<p class="muted" style="margin-top:14px;">No bookings found for this number.</p>`) : ""}
+  </div>`;
+}
+
+function viewGallery(){
+  const pub = state.projects.filter(p=>p.status==="Published");
+  return topbar("Our Work","home") + `
+  <div class="content">
+    ${pub.length===0 ? `<p class="muted">No published work yet — check back soon!</p>` : pub.map(p=>`
+      <div class="card" style="margin-bottom:14px;">
+        <b>${esc(p.title)}</b><div class="muted">${esc(p.location||"")} · ${esc(p.service||"")}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+          <div class="imgph">Before<br/>${esc(p.beforeCaption||"")}</div>
+          <div class="imgph">After<br/>${esc(p.afterCaption||"")}</div>
+        </div>
+        ${p.youtubeUrl ? `<a class="btn btn-outline btn-sm" style="margin-top:10px;" href="${esc(p.youtubeUrl)}" target="_blank">▶ Watch: ${esc(p.youtubeTitle||"Video")}</a>` : ""}
+      </div>`).join("")}
+  </div>`;
+}
+
+function stars(n){ let out=""; for(let i=1;i<=5;i++) out += i<=n?"★":"☆"; return out; }
+
+function viewReviews(){
+  const pub = state.reviews.filter(r=>r.status==="Approved" && r.published);
+  return topbar("Reviews","home") + `
+  <div class="content">
+    <div class="card" style="margin-bottom:16px;">
+      <b>Share your experience</b>
+      <label>Your Name</label><input id="rv_name" />
+      <label>Rating</label>
+      <select id="rv_rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select>
+      <label>Review</label><textarea id="rv_text" rows="3"></textarea>
+      <button class="btn btn-gold btn-block" style="margin-top:10px;" onclick="Actions.submitReview()">Submit Review</button>
+    </div>
+    ${pub.map(r=>`
+      <div class="booking-row">
+        <div class="row-between"><b>${esc(r.name)}</b><span class="starrow" style="font-size:1rem;">${stars(r.rating)}</span></div>
+        <div class="muted" style="margin-top:4px;">${esc(r.text)}</div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function viewContact(){
+  const s = state.settings;
+  return topbar("Contact Us","home") + `
+  <div class="content">
+    <div class="card">
+      <table class="plain">
+        <tr><td>📍</td><td>${esc(s.address)}</td></tr>
+        <tr><td>📞</td><td><a href="tel:${esc(s.phone)}">${esc(s.phone)}</a></td></tr>
+        <tr><td>💬</td><td><a href="https://wa.me/${esc(s.whatsapp)}" target="_blank">WhatsApp Us</a></td></tr>
+        <tr><td>📷</td><td><a href="${esc(s.instagram)}" target="_blank">Instagram</a></td></tr>
+        <tr><td>▶️</td><td><a href="${esc(s.youtube)}" target="_blank">YouTube</a></td></tr>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ---------- ADMIN VIEWS ----------
+function viewAdminLogin(){
+  return `<div class="content" style="padding-top:60px;text-align:center;">
+    <div class="display" style="font-size:1.4rem;color:var(--navy);margin-bottom:4px;">Staff Login</div>
+    <p class="muted" style="margin-bottom:20px;">SRR HCS Admin</p>
+    <div class="card" style="text-align:left;">
+      <label>Email</label><input id="a_email" type="email" placeholder="admin@example.com" />
+      <label>Password</label><input id="a_pass" type="password" onkeydown="if(event.key==='Enter')Actions.adminLogin()" />
+      <div id="a_err" style="color:var(--danger);font-size:.85rem;margin-top:8px;"></div>
+      <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="Actions.adminLogin()">Log In</button>
+    </div>
+    <button class="footer-link" onclick="Nav.switchSide('customer')">← Back to customer site</button>
+  </div>`;
+}
+
+function syncStrip(){
+  if(state.syncError) return `<div class="sync-strip sync-err"><span>⚠ ${esc(state.syncError)}</span></div>`;
+  return `<div class="sync-strip sync-ok"><span>✓ Live-connected to database</span></div>`;
+}
+
+function adminNav(){
+  const tabs = [["adminHome","Dashboard"],["adminBookings","Bookings"],["adminProjects","Projects"],["adminReviews","Reviews"],["adminSettings","Settings"]];
+  return `<div class="topbar"><h2>SRR HCS Admin</h2>
+    <button class="back" style="margin-left:auto;font-size:.8rem;" onclick="Actions.adminLogout()">Log out</button>
+  </div>
+  <div class="adminnav">${tabs.map(([v,l])=>`<button class="${state.view===v?'active':''}" onclick="Nav.go('${v}')">${l}</button>`).join("")}</div>`;
+}
+
+function viewAdminHome(){
+  const b = state.bookings;
+  const pending = b.filter(x=>x.status==="Pending").length;
+  const confirmed = b.filter(x=>x.status==="Confirmed").length;
+  const completed = b.filter(x=>x.status==="Completed").length;
+  const pendingReviews = state.reviews.filter(r=>r.status==="Pending").length;
+  const upcoming = b.filter(x=>x.status==="Confirmed").sort((a,c)=>(a.date+a.time).localeCompare(c.date+c.time)).slice(0,5);
+  return adminNav() + `<div class="content">
+    ${syncStrip()}
+    <div class="stat-grid">
+      <div class="stat"><div class="num">${pending}</div><div class="lab">Pending</div></div>
+      <div class="stat"><div class="num">${confirmed}</div><div class="lab">Confirmed</div></div>
+      <div class="stat"><div class="num">${completed}</div><div class="lab">Completed</div></div>
+      <div class="stat"><div class="num">${pendingReviews}</div><div class="lab">Reviews to approve</div></div>
+    </div>
+    <h3 style="margin-bottom:8px;">Upcoming confirmed work</h3>
+    ${upcoming.length===0?`<p class="muted">Nothing confirmed yet.</p>`:upcoming.map(x=>`
+      <div class="booking-row"><b>${esc(x.name)}</b> — ${esc(x.service)}<div class="muted">${fmtDate(x.date)} · ${esc(x.time)}</div></div>`).join("")}
+  </div>`;
+}
+
+function viewAdminBookings(){
+  const list = [...state.bookings].sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  return adminNav() + `<div class="content">
+    ${syncStrip()}
+    ${list.length===0?`<p class="muted">No bookings yet.</p>`:list.map(b=>`
+      <div class="booking-row">
+        <div class="row-between"><b>${esc(b.name)}</b><span class="pill ${pillClass(b.status)}">${esc(b.status)}</span></div>
+        <div class="muted">${esc(b.service)} · ${fmtDate(b.date)} · ${esc(b.time)}</div>
+        <div class="muted">📞 ${esc(b.phone)} · ${esc(b.address||"")}</div>
+        ${b.message?`<div class="muted">"${esc(b.message)}"</div>`:""}
+        <div class="btnrow">
+          ${b.status==="Pending"?`<button class="btn btn-outline btn-sm" onclick="Actions.setStatus('${b.id}','Contacted')">Mark Contacted</button>
+            <button class="btn btn-primary btn-sm" onclick="Actions.confirmBooking('${b.id}')">Confirm</button>`:""}
+          ${b.status==="Contacted"?`<button class="btn btn-primary btn-sm" onclick="Actions.confirmBooking('${b.id}')">Confirm</button>`:""}
+          ${b.status==="Confirmed"?`<button class="btn btn-outline btn-sm" onclick="Actions.setStatus('${b.id}','Completed')">Mark Completed</button>`:""}
+          ${["Pending","Contacted","Confirmed"].includes(b.status)?`<button class="btn btn-danger btn-sm" onclick="Actions.setStatus('${b.id}','Cancelled')">Cancel</button>`:""}
+          <a class="btn btn-outline btn-sm" target="_blank" href="https://wa.me/91${esc(b.phone)}?text=${encodeURIComponent('Hi '+b.name+', your SRR HCS booking for '+b.service+' on '+fmtDate(b.date)+' at '+b.time+' is confirmed. Thank you!')}">WhatsApp</a>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function viewAdminProjects(){
+  return adminNav() + `<div class="content">
+    ${syncStrip()}
+    <div class="card" style="margin-bottom:16px;">
+      <b>Add New Project</b>
+      <label>Title</label><input id="p_title" />
+      <label>Location</label><input id="p_location" placeholder="e.g. Kamareddy" />
+      <label>Service</label><select id="p_service">${SERVICES.map(s=>`<option>${esc(s)}</option>`).join("")}</select>
+      <label>Before photo caption</label><input id="p_before" placeholder="describe the before photo" />
+      <label>After photo caption</label><input id="p_after" placeholder="describe the after photo" />
+      <label>YouTube title (optional)</label><input id="p_ytitle" />
+      <label>YouTube URL (optional)</label><input id="p_yurl" />
+      <button class="btn btn-primary btn-block" style="margin-top:10px;" onclick="Actions.addProject()">Add Project (Draft)</button>
+    </div>
+    ${state.projects.map(p=>`
+      <div class="booking-row">
+        <div class="row-between"><b>${esc(p.title)}</b><span class="pill ${p.status==='Published'?'pill-confirmed':'pill-pending'}">${esc(p.status)}</span></div>
+        <div class="muted">${esc(p.location||"")} · ${esc(p.service||"")}</div>
+        <div class="btnrow">
+          <button class="btn btn-outline btn-sm" onclick="Actions.toggleProjectStatus('${p.id}')">${p.status==='Published'?'Unpublish':'Publish'}</button>
+          <button class="btn btn-danger btn-sm" onclick="Actions.deleteProject('${p.id}')">Delete</button>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function viewAdminReviews(){
+  return adminNav() + `<div class="content">
+    ${syncStrip()}
+    ${state.reviews.length===0?`<p class="muted">No reviews yet.</p>`:state.reviews.map(r=>`
+      <div class="booking-row">
+        <div class="row-between"><b>${esc(r.name)}</b><span class="pill ${r.status==='Approved'?'pill-confirmed':(r.status==='Rejected'?'pill-cancelled':'pill-pending')}">${esc(r.status)}</span></div>
+        <div class="starrow" style="font-size:1rem;">${stars(r.rating)}</div>
+        <div class="muted">${esc(r.text)}</div>
+        <div class="btnrow">
+          ${r.status==='Pending'?`<button class="btn btn-primary btn-sm" onclick="Actions.setReviewStatus('${r.id}','Approved')">Approve</button>
+            <button class="btn btn-danger btn-sm" onclick="Actions.setReviewStatus('${r.id}','Rejected')">Reject</button>`:""}
+          ${r.status==='Approved'?`<button class="btn btn-outline btn-sm" onclick="Actions.togglePublish('${r.id}')">${r.published?'Unpublish':'Publish'}</button>`:""}
+          <button class="btn btn-outline btn-sm" onclick="Actions.copyReview('${r.id}')">Copy Review</button>
+          <button class="btn btn-danger btn-sm" onclick="Actions.deleteReview('${r.id}')">Delete</button>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function viewAdminSettings(){
+  const s = state.settings;
+  return adminNav() + `<div class="content">
+    ${syncStrip()}
+    <div class="card">
+      <label>Business Name (line 1)</label><input id="s_name1" value="${esc(s.businessName)}" />
+      <label>Business Name (line 2)</label><input id="s_name2" value="${esc(s.businessName2)}" />
+      <label>Tagline</label><input id="s_tagline" value="${esc(s.tagline)}" />
+      <label>Address</label><input id="s_address" value="${esc(s.address)}" />
+      <label>Phone</label><input id="s_phone" value="${esc(s.phone)}" />
+      <label>WhatsApp (with country code, no +)</label><input id="s_whatsapp" value="${esc(s.whatsapp)}" />
+      <label>Instagram URL</label><input id="s_instagram" value="${esc(s.instagram)}" />
+      <label>YouTube URL</label><input id="s_youtube" value="${esc(s.youtube)}" />
+      <button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="Actions.saveSettings()">Save Settings</button>
+    </div>
+  </div>`;
+}
+
+// ---------- draw ----------
+function draw(){
+  let html;
+  if(state.side==="customer"){
+    const map = {home:viewHome, booking:viewBooking, status:viewStatus, gallery:viewGallery, reviews:viewReviews, contact:viewContact};
+    html = (map[state.view]||viewHome)();
+    document.getElementById("root").innerHTML = `<div class="container">${html}</div>${state.toastMsg?`<div class="toast">${esc(state.toastMsg)}</div>`:""}`;
+  } else {
+    if(!state.adminUser){ html = viewAdminLogin(); }
+    else {
+      const map = {adminHome:viewAdminHome, adminBookings:viewAdminBookings, adminProjects:viewAdminProjects, adminReviews:viewAdminReviews, adminSettings:viewAdminSettings};
+      html = (map[state.view]||viewAdminHome)();
+    }
+    document.getElementById("root").innerHTML = `<div class="container wide">${html}</div>${state.toastMsg?`<div class="toast">${esc(state.toastMsg)}</div>`:""}`;
+  }
+}
+
+// ---------- actions ----------
+const Nav = { go, switchSide };
+
+const Actions = {
+  async submitBooking(){
+    const service = document.getElementById("f_service").value;
+    const date = document.getElementById("f_date").value;
+    const time = document.getElementById("f_time").value;
+    const name = document.getElementById("f_name").value.trim();
+    const phone = document.getElementById("f_phone").value.trim();
+    const address = document.getElementById("f_address").value.trim();
+    const message = document.getElementById("f_message").value.trim();
+    const err = document.getElementById("f_err");
+    if(!date || !name || !phone || !address){ err.textContent = "Please fill in date, name, phone and address."; return; }
+    if(!/^[0-9]{10}$/.test(phone)){ err.textContent = "Enter a valid 10-digit phone number."; return; }
+    const conflict = await checkSlotConflict(date, time, null);
+    if(conflict){ err.textContent = "This date and time has already been confirmed. Please choose another available date and time."; return; }
+    err.textContent = "";
+    await addDoc(collection(db,"bookings"), {
+      service, date, time, name, phone, address, message,
+      status: "Pending", adminNotes: "", createdAt: serverTimestamp(),
+    });
+    toast("Booking request sent!");
+    go("home");
+  },
+
+  lookupBooking(){
+    state.bookingLookupPhone = document.getElementById("lookup_phone").value.trim();
+    draw();
+  },
+
+  async submitReview(){
+    const name = document.getElementById("rv_name").value.trim();
+    const rating = Number(document.getElementById("rv_rating").value);
+    const text = document.getElementById("rv_text").value.trim();
+    if(!name || !text) return;
+    await addDoc(collection(db,"reviews"), { name, rating, text, projectRef:"", status:"Pending", published:false, createdAt: serverTimestamp() });
+    toast("Thanks! Your review is awaiting approval.");
+    document.getElementById("rv_name").value=""; document.getElementById("rv_text").value="";
+  },
+
+  async adminLogin(){
+    const email = document.getElementById("a_email").value.trim();
+    const pass = document.getElementById("a_pass").value;
+    const err = document.getElementById("a_err");
+    try{
+      await signInWithEmailAndPassword(auth, email, pass);
+      err.textContent = "";
+    }catch(e){
+      err.textContent = "Login failed: " + e.message;
+    }
+  },
+  async adminLogout(){ await signOut(auth); switchSide("customer"); },
+
+  async setStatus(id, status){
+    await updateDoc(doc(db,"bookings",id), { status });
+    toast("Updated to " + status);
+  },
+  async confirmBooking(id){
+    const b = state.bookings.find(x=>x.id===id);
+    if(!b) return;
+    const conflict = await checkSlotConflict(b.date, b.time, id);
+    if(conflict){ toast("This date and time has already been confirmed. Please choose another available date and time."); return; }
+    await updateDoc(doc(db,"bookings",id), { status: "Confirmed" });
+    toast("Booking confirmed");
+  },
+
+  async addProject(){
+    const title = document.getElementById("p_title").value.trim();
+    if(!title) return;
+    await addDoc(collection(db,"projects"), {
+      title,
+      location: document.getElementById("p_location").value.trim(),
+      service: document.getElementById("p_service").value,
+      beforeCaption: document.getElementById("p_before").value.trim(),
+      afterCaption: document.getElementById("p_after").value.trim(),
+      youtubeTitle: document.getElementById("p_ytitle").value.trim(),
+      youtubeUrl: document.getElementById("p_yurl").value.trim(),
+      status: "Draft", createdAt: serverTimestamp(),
+    });
+    toast("Project added as Draft");
+  },
+  async toggleProjectStatus(id){
+    const p = state.projects.find(x=>x.id===id);
+    await updateDoc(doc(db,"projects",id), { status: p.status==="Published"?"Draft":"Published" });
+  },
+  async deleteProject(id){ if(confirm("Delete this project?")) await deleteDoc(doc(db,"projects",id)); },
+
+  async setReviewStatus(id, status){ await updateDoc(doc(db,"reviews",id), { status }); },
+  async togglePublish(id){
+    const r = state.reviews.find(x=>x.id===id);
+    await updateDoc(doc(db,"reviews",id), { published: !r.published });
+  },
+  async deleteReview(id){ if(confirm("Delete this review?")) await deleteDoc(doc(db,"reviews",id)); },
+  copyReview(id){
+    const r = state.reviews.find(x=>x.id===id);
+    const text = `"${r.text}" — ${r.name}, ${stars(r.rating)}`;
+    navigator.clipboard?.writeText(text);
+    toast("Review copied");
+  },
+
+  async saveSettings(){
+    const next = {
+      businessName: document.getElementById("s_name1").value.trim(),
+      businessName2: document.getElementById("s_name2").value.trim(),
+      tagline: document.getElementById("s_tagline").value.trim(),
+      address: document.getElementById("s_address").value.trim(),
+      phone: document.getElementById("s_phone").value.trim(),
+      whatsapp: document.getElementById("s_whatsapp").value.trim(),
+      instagram: document.getElementById("s_instagram").value.trim(),
+      youtube: document.getElementById("s_youtube").value.trim(),
+    };
+    await setDoc(doc(db,"settings","main"), next, { merge: true });
+    toast("Settings saved");
+  },
+};
+
+window.Nav = Nav;
+window.Actions = Actions;
+
+draw();
+</script>
+</body>
+</html>
