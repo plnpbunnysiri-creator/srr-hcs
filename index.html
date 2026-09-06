@@ -74,7 +74,8 @@
   .adminnav button{white-space:nowrap;padding:8px 14px;border-radius:10px;font-size:.82rem;font-weight:600;border:none;background:transparent;color:#c9d6e5;}
   .adminnav button.active{background:var(--gold);color:#2b2000;}
   .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:.85rem;z-index:50;}
-  .imgph{aspect-ratio:4/3;background:#e9e4d6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#8a8168;text-align:center;padding:6px;}
+  .imgph{aspect-ratio:4/3;background:#e9e4d6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#8a8168;text-align:center;padding:6px;overflow:hidden;}
+  .imgph img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
   .starrow{display:flex;gap:4px;font-size:1.3rem;color:var(--gold);}
   table.plain{width:100%;border-collapse:collapse;font-size:.85rem;}
   table.plain td{padding:4px 0;}
@@ -88,7 +89,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import {
   getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
-  onSnapshot, query, where, orderBy, serverTimestamp
+  onSnapshot, query, where, orderBy, serverTimestamp, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
@@ -174,7 +175,7 @@ function esc(s){ return (s??"").toString().replace(/[&<>"']/g,c=>({"&":"&amp;","
 function fmtDate(d){ if(!d) return ""; const dt=new Date(d+"T00:00:00"); return dt.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}); }
 function toast(msg){ state.toastMsg = msg; draw(); setTimeout(()=>{ state.toastMsg=null; draw(); }, 2600); }
 function pillClass(status){
-  return {Pending:"pill-pending",Confirmed:"pill-confirmed",Completed:"pill-completed",Cancelled:"pill-cancelled",Contacted:"pill-contacted"}[status] || "pill-pending";
+  return {Pending:"pill-pending",Confirmed:"pill-confirmed",Completed:"pill-completed",Cancelled:"pill-cancelled",Contacted:"pill-contacted","Site Visit Scheduled":"pill-contacted"}[status] || "pill-pending";
 }
 function go(view){ state.view = view; draw(); window.scrollTo(0,0); }
 function switchSide(side){ state.side = side; state.view = side==="admin" ? (state.adminUser?"adminHome":"adminLogin") : "home"; draw(); }
@@ -234,6 +235,18 @@ function viewBooking(){
   </div>`;
 }
 
+function statusNote(status){
+  const notes = {
+    "Pending": "We've received your request and will contact you soon.",
+    "Contacted": "We've been in touch — a site visit will be scheduled next.",
+    "Site Visit Scheduled": "Our team will visit before confirming this booking.",
+    "Confirmed": "Your booking is confirmed. See you then!",
+    "Completed": "This job is complete. Thank you!",
+    "Cancelled": "This booking was cancelled.",
+  };
+  return notes[status] || "";
+}
+
 function viewStatus(){
   const phone = state.bookingLookupPhone;
   const matches = phone ? state.bookings.filter(b=>b.phone===phone) : [];
@@ -247,7 +260,9 @@ function viewStatus(){
     ${phone ? (matches.length ? matches.map(b=>`
       <div class="booking-row">
         <div class="row-between"><b>${esc(b.service)}</b><span class="pill ${pillClass(b.status)}">${esc(b.status)}</span></div>
+        ${b.bookingNumber?`<div class="muted">${esc(b.bookingNumber)}</div>`:""}
         <div class="muted">${fmtDate(b.date)} · ${esc(b.time)}</div>
+        <div class="muted" style="margin-top:4px;">${esc(statusNote(b.status))}</div>
       </div>`).join("") : `<p class="muted" style="margin-top:14px;">No bookings found for this number.</p>`) : ""}
   </div>`;
 }
@@ -260,8 +275,8 @@ function viewGallery(){
       <div class="card" style="margin-bottom:14px;">
         <b>${esc(p.title)}</b><div class="muted">${esc(p.location||"")} · ${esc(p.service||"")}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
-          <div class="imgph">Before<br/>${esc(p.beforeCaption||"")}</div>
-          <div class="imgph">After<br/>${esc(p.afterCaption||"")}</div>
+          <div class="imgph">${p.beforeUrl ? `<img src="${esc(p.beforeUrl)}" alt="Before" />` : `Before<br/>${esc(p.beforeCaption||"")}`}</div>
+          <div class="imgph">${p.afterUrl ? `<img src="${esc(p.afterUrl)}" alt="After" />` : `After<br/>${esc(p.afterCaption||"")}`}</div>
         </div>
         ${p.youtubeUrl ? `<a class="btn btn-outline btn-sm" style="margin-top:10px;" href="${esc(p.youtubeUrl)}" target="_blank">▶ Watch: ${esc(p.youtubeTitle||"Video")}</a>` : ""}
       </div>`).join("")}
@@ -362,16 +377,19 @@ function viewAdminBookings(){
     ${list.length===0?`<p class="muted">No bookings yet.</p>`:list.map(b=>`
       <div class="booking-row">
         <div class="row-between"><b>${esc(b.name)}</b><span class="pill ${pillClass(b.status)}">${esc(b.status)}</span></div>
+        ${b.bookingNumber?`<div class="muted">${esc(b.bookingNumber)}</div>`:""}
         <div class="muted">${esc(b.service)} · ${fmtDate(b.date)} · ${esc(b.time)}</div>
         <div class="muted">📞 ${esc(b.phone)} · ${esc(b.address||"")}</div>
         ${b.message?`<div class="muted">"${esc(b.message)}"</div>`:""}
         <div class="btnrow">
           ${b.status==="Pending"?`<button class="btn btn-outline btn-sm" onclick="Actions.setStatus('${b.id}','Contacted')">Mark Contacted</button>
-            <button class="btn btn-primary btn-sm" onclick="Actions.confirmBooking('${b.id}')">Confirm</button>`:""}
-          ${b.status==="Contacted"?`<button class="btn btn-primary btn-sm" onclick="Actions.confirmBooking('${b.id}')">Confirm</button>`:""}
+            <button class="btn btn-primary btn-sm" onclick="Actions.setStatus('${b.id}','Site Visit Scheduled')">Schedule Site Visit</button>`:""}
+          ${b.status==="Contacted"?`<button class="btn btn-primary btn-sm" onclick="Actions.setStatus('${b.id}','Site Visit Scheduled')">Schedule Site Visit</button>`:""}
+          ${b.status==="Site Visit Scheduled"?`<button class="btn btn-primary btn-sm" onclick="Actions.confirmBooking('${b.id}')">Confirm</button>`:""}
           ${b.status==="Confirmed"?`<button class="btn btn-outline btn-sm" onclick="Actions.setStatus('${b.id}','Completed')">Mark Completed</button>`:""}
-          ${["Pending","Contacted","Confirmed"].includes(b.status)?`<button class="btn btn-danger btn-sm" onclick="Actions.setStatus('${b.id}','Cancelled')">Cancel</button>`:""}
+          ${["Pending","Contacted","Site Visit Scheduled","Confirmed"].includes(b.status)?`<button class="btn btn-danger btn-sm" onclick="Actions.setStatus('${b.id}','Cancelled')">Cancel</button>`:""}
           <a class="btn btn-outline btn-sm" target="_blank" href="https://wa.me/91${esc(b.phone)}?text=${encodeURIComponent('Hi '+b.name+', your SRR HCS booking for '+b.service+' on '+fmtDate(b.date)+' at '+b.time+' is confirmed. Thank you!')}">WhatsApp</a>
+          <button class="btn btn-danger btn-sm" onclick="Actions.deleteBooking('${b.id}')">Delete</button>
         </div>
       </div>`).join("")}
   </div>`;
@@ -386,7 +404,9 @@ function viewAdminProjects(){
       <label>Location</label><input id="p_location" placeholder="e.g. Kamareddy" />
       <label>Service</label><select id="p_service">${SERVICES.map(s=>`<option>${esc(s)}</option>`).join("")}</select>
       <label>Before photo caption</label><input id="p_before" placeholder="describe the before photo" />
+      <label>Before photo link (optional)</label><input id="p_beforeurl" placeholder="paste image link here" />
       <label>After photo caption</label><input id="p_after" placeholder="describe the after photo" />
+      <label>After photo link (optional)</label><input id="p_afterurl" placeholder="paste image link here" />
       <label>YouTube title (optional)</label><input id="p_ytitle" />
       <label>YouTube URL (optional)</label><input id="p_yurl" />
       <button class="btn btn-primary btn-block" style="margin-top:10px;" onclick="Actions.addProject()">Add Project (Draft)</button>
@@ -458,6 +478,20 @@ function draw(){
 }
 
 // ---------- actions ----------
+async function getNextBookingNumber(){
+  const counterRef = doc(db,"counters","bookingSeq");
+  const seq = await runTransaction(db, async (tx)=>{
+    const snap = await tx.get(counterRef);
+    const current = snap.exists() ? snap.data().next : 33;
+    tx.set(counterRef, { next: current + 1 }, { merge: true });
+    return current;
+  });
+  const now = new Date();
+  const monthAbbr = now.toLocaleString("en-US",{month:"short"}).toUpperCase();
+  const year = now.getFullYear();
+  return `SRR-HCS-${monthAbbr}${year}-${String(seq).padStart(3,"0")}`;
+}
+
 const Nav = { go, switchSide };
 
 const Actions = {
@@ -475,11 +509,12 @@ const Actions = {
     const conflict = await checkSlotConflict(date, time, null);
     if(conflict){ err.textContent = "This date and time has already been confirmed. Please choose another available date and time."; return; }
     err.textContent = "";
+    const bookingNumber = await getNextBookingNumber();
     await addDoc(collection(db,"bookings"), {
-      service, date, time, name, phone, address, message,
+      bookingNumber, service, date, time, name, phone, address, message,
       status: "Pending", adminNotes: "", createdAt: serverTimestamp(),
     });
-    toast("Booking request sent!");
+    toast("Booking request sent! We'll schedule a site visit before confirming.");
     go("home");
   },
 
@@ -515,6 +550,12 @@ const Actions = {
     await updateDoc(doc(db,"bookings",id), { status });
     toast("Updated to " + status);
   },
+  async deleteBooking(id){
+    if(confirm("Delete this booking permanently?")) {
+      await deleteDoc(doc(db,"bookings",id));
+      toast("Booking deleted");
+    }
+  },
   async confirmBooking(id){
     const b = state.bookings.find(x=>x.id===id);
     if(!b) return;
@@ -532,7 +573,9 @@ const Actions = {
       location: document.getElementById("p_location").value.trim(),
       service: document.getElementById("p_service").value,
       beforeCaption: document.getElementById("p_before").value.trim(),
+      beforeUrl: document.getElementById("p_beforeurl").value.trim(),
       afterCaption: document.getElementById("p_after").value.trim(),
+      afterUrl: document.getElementById("p_afterurl").value.trim(),
       youtubeTitle: document.getElementById("p_ytitle").value.trim(),
       youtubeUrl: document.getElementById("p_yurl").value.trim(),
       status: "Draft", createdAt: serverTimestamp(),
